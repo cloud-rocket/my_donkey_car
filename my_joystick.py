@@ -1,6 +1,6 @@
-import serial
+
 from donkeycar.parts.controller import Joystick, JoystickController
-from donkeycar.parts.serial_controllrt import SerialController
+
 
 class MyJoystick(Joystick):
     #An interface to a physical joystick available at /dev/input/js0
@@ -34,16 +34,7 @@ class MyJoystick(Joystick):
             0x2 : 'LT',
         }
 
-class MySerialController(SerialController):
 
-    def __init__(self, *args, **kwargs):
-        print("Starting My Serial Controller")
-
-        self.angle = 0.0
-        self.throttle = 0.0
-        self.mode = 'user'
-        self.recording = False
-        self.serial = serial.Serial('/dev/ttyUSB0', 115200, timeout=1) #Serial port - laptop: 'COM3', Arduino: '/dev/ttyACM0'
 
 class MyJoystickController(JoystickController):
     #A Controller object that maps inputs to actions
