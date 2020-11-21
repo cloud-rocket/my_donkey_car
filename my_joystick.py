@@ -1,6 +1,6 @@
-
+import serial
+import time
 from donkeycar.parts.controller import Joystick, JoystickController
-
 
 class MyJoystick(Joystick):
     #An interface to a physical joystick available at /dev/input/js0
@@ -73,3 +73,63 @@ class MyJoystickController(JoystickController):
         }
 
 
+# Display output `sudo screen /dev/ttyUSB0 115200`
+class MySerialController:
+
+    def __init__(self, *args, **kwargs):
+        print("Starting My Serial Controller")
+
+        self.angle = 0.0
+        self.throttle = 0.0
+        self.mode = 'user'
+        self.recording = False
+        self.serial = serial.Serial('/dev/ttyUSB0', 115200,
+                                    timeout=1)  # Serial port - laptop: 'COM3', Arduino: '/dev/ttyACM0'
+
+    def update(self):
+        # delay on startup to avoid crashing
+        print("Warming Serial Controller")
+        time.sleep(3)
+
+        while True:
+            line = str(self.serial.readline().decode()).strip('\n').strip('\r')
+            output = line.split()
+
+            # steering
+            if output[0].isnumeric() and float(output[0]) > 0:
+                self.angle = (float(output[0]) - 1500) / 500
+            
+            # Throttle 
+            if output[1].isnumeric() and float(output[0]) > 0:
+                self.throttle = (float(output[1]) - 1500) / 500
+                # if self.throttle > 0.01:
+                # self.recording = True
+                # print("Recording")
+                # else:
+                #    self.recording = False
+
+            # Mode
+            if len(output) > 2 and output[2].isnumeric():
+                three_state = float(output[2])
+                self.mode = 'user'
+                if three_state >= 1000 and three_state < 1800:
+                    self.mode = 'local_angle'
+                if three_state >= 1800:
+                    self.mode = 'local'
+
+            # Recording
+            #if len(output) > 2 and output[2].isnumeric():
+            #    self.mode = 'user'
+            #    if output[2] >= 1000 and output[2] < 1800:
+            #        self.mode = 'local_angle'
+            #    if output[2] >= 1800:
+            #        self.mode = 'local'
+
+            time.sleep(0.01)
+
+    def run(self, img_arr=None):
+        return self.run_threaded()
+
+    def run_threaded(self, img_arr=None):
+        # print("Signal:", self.angle, self.throttle)
+        return self.angle, self.throttle, self.mode, self.recording
