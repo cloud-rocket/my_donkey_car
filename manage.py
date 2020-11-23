@@ -605,6 +605,23 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
     tub = th.new_tub_writer(inputs=inputs, types=types, user_meta=meta)
     V.add(tub, inputs=inputs, outputs=["tub/num_records"], run_condition='recording')
 
+    #Telemetry (we add the same metrics added to TubHandler
+    if cfg.HAVE_TELEMETRY:
+        from donkeycar.parts.telemetry import Telemetry
+
+        # publish all simple types
+        inputs_to_publish = []
+        types_to_publish = []
+        for ind in range(0, len(types)):
+            if types[ind] in ['float', 'str', 'int']:
+                inputs_to_publish.append(inputs[ind])
+                types_to_publish.append(types[ind])
+
+        tel = Telemetry(cfg, default_inputs=inputs_to_publish, default_types=types_to_publish)
+
+        V.add(tel, inputs=inputs_to_publish, outputs=["tub/queue_size"], threaded=False)
+
+
     if cfg.PUB_CAMERA_IMAGES:
         from donkeycar.parts.network import TCPServeValue
         from donkeycar.parts.image import ImgArrToJpg
