@@ -83,6 +83,7 @@ class MySerialController:
         self.throttle = 0.0
         self.mode = 'user'
         self.recording = False
+        self.emergency_stop = False
         self.serial = serial.Serial('/dev/ttyUSB0', 115200,
                                     timeout=1)  # Serial port - laptop: 'COM3', Arduino: '/dev/ttyACM0'
 
@@ -102,11 +103,6 @@ class MySerialController:
             # Throttle 
             if output[1].isnumeric() and float(output[0]) > 0:
                 self.throttle = (float(output[1]) - 1500) / 500
-                # if self.throttle > 0.01:
-                # self.recording = True
-                # print("Recording")
-                # else:
-                #    self.recording = False
 
             # Mode
             if len(output) > 2 and output[2].isnumeric():
@@ -118,14 +114,22 @@ class MySerialController:
                     self.mode = 'local'
 
             # Recording
-            #if len(output) > 2 and output[2].isnumeric():
-            #    self.mode = 'user'
-            #    if output[2] >= 1000 and output[2] < 1800:
-            #        self.mode = 'local_angle'
-            #    if output[2] >= 1800:
-            #        self.mode = 'local'
+            if len(output) > 3 and output[3].isnumeric():
+                if float(output[3]) > 1800:
+                    self.recording = True
+                else: 
+                    self.recording = False
+
+            # Emergency stop
+            if len(output) > 4 and output[3].isnumeric():
+                if float(output[4]) > 1800:
+                    print('E-Stop!!!')
+                    self.mode = "user"            
+                    self.recording = False
+                    self.throttle = 0.0
 
             time.sleep(0.01)
+
 
     def run(self, img_arr=None):
         return self.run_threaded()
