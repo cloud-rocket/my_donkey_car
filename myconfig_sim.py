@@ -16,33 +16,30 @@
 # MODELS_PATH = os.path.join(CAR_PATH, 'models')
 # 
 # #VEHICLE
-DRIVE_LOOP_HZ = 40#20      # the vehicle loop will pause if faster than this speed.
+# DRIVE_LOOP_HZ = 20      # the vehicle loop will pause if faster than this speed.
 # MAX_LOOPS = None        # the vehicle loop can abort after this many iterations, when given a positive integer.
 # 
 # #CAMERA
-CAMERA_TYPE = "CSIC"   # (PICAM|WEBCAM|CVCAM|CSIC|V4L|D435|MOCK|IMAGE_LIST)
-IMAGE_W = 224
-IMAGE_H = 224
-#CAMERA_TYPE = "WEBCAM"
-#IMAGE_W = 224
-#IMAGE_H = 224
-IMAGE_DEPTH = 3         # default RGB=3, make 1 for mono
+# CAMERA_TYPE = "PICAM"   # (PICAM|WEBCAM|CVCAM|CSIC|V4L|D435|MOCK|IMAGE_LIST)
+# IMAGE_W = 160
+# IMAGE_H = 120
+# IMAGE_DEPTH = 3         # default RGB=3, make 1 for mono
 # CAMERA_FRAMERATE = DRIVE_LOOP_HZ
 # CAMERA_VFLIP = False
 # CAMERA_HFLIP = False
 # # For CSIC camera - If the camera is mounted in a rotated position, changing the below parameter will correct the output frame orientation
-# CSIC_CAM_GSTREAMER_FLIP_PARM = 3 # (0 => none , 4 => Flip horizontally, 6 => Flip vertically)
+# CSIC_CAM_GSTREAMER_FLIP_PARM = 0 # (0 => none , 4 => Flip horizontally, 6 => Flip vertically)
 # 
 # # For IMAGE_LIST camera
 # # PATH_MASK = "~/mycar/data/tub_1_20-03-12/*.jpg"
 # 
 # #9865, over rides only if needed, ie. TX2..
-PCA9685_I2C_ADDR = 0x40     #I2C address, use i2cdetect to validate this number
-PCA9685_I2C_BUSNUM = 1   #None will auto detect, which is fine on the pi. But other platforms should specify the bus num.
+# PCA9685_I2C_ADDR = 0x40     #I2C address, use i2cdetect to validate this number
+# PCA9685_I2C_BUSNUM = None   #None will auto detect, which is fine on the pi. But other platforms should specify the bus num.
 # 
 # #SSD1306_128_32
-USE_SSD1306_128_32 = True    # Enable the SSD_1306 OLED Display
-SSD1306_128_32_I2C_BUSNUM = 1 # I2C bus number
+# USE_SSD1306_128_32 = False    # Enable the SSD_1306 OLED Display
+# SSD1306_128_32_I2C_BUSNUM = 1 # I2C bus number
 # 
 # #DRIVETRAIN
 # #These options specify which chasis and motor setup you are using. Most are using SERVO_ESC.
@@ -53,9 +50,9 @@ SSD1306_128_32_I2C_BUSNUM = 1 # I2C bus number
 # DRIVE_TRAIN_TYPE = "SERVO_ESC" # SERVO_ESC|DC_STEER_THROTTLE|DC_TWO_WHEEL|SERVO_HBRIDGE_PWM|PIGPIO_PWM|MM1|MOCK
 # 
 # #STEERING
-STEERING_CHANNEL = 13            #channel on the 9685 pwm board 0-15
-STEERING_LEFT_PWM = 585 # 605         #pwm value for full left steering
-STEERING_RIGHT_PWM = 145 # 145        #pwm value for full right steering
+# STEERING_CHANNEL = 1            #channel on the 9685 pwm board 0-15
+# STEERING_LEFT_PWM = 460         #pwm value for full left steering
+# STEERING_RIGHT_PWM = 290        #pwm value for full right steering
 # 
 # #STEERING FOR PIGPIO_PWM
 # STEERING_PWM_PIN = 13           #Pin numbering according to Broadcom numbers
@@ -63,10 +60,10 @@ STEERING_RIGHT_PWM = 145 # 145        #pwm value for full right steering
 # STEERING_PWM_INVERTED = False   #If PWM needs to be inverted
 # 
 # #THROTTLE
-THROTTLE_CHANNEL = 15            #channel on the 9685 pwm board 0-15
-THROTTLE_FORWARD_PWM = 475 #425      #pwm value for max forward throttle
-THROTTLE_STOPPED_PWM = 400      #pwm value for no movement
-THROTTLE_REVERSE_PWM = 300 #360      #pwm value for max reverse throttle
+# THROTTLE_CHANNEL = 0            #channel on the 9685 pwm board 0-15
+# THROTTLE_FORWARD_PWM = 500      #pwm value for max forward throttle
+# THROTTLE_STOPPED_PWM = 370      #pwm value for no movement
+# THROTTLE_REVERSE_PWM = 220      #pwm value for max reverse throttle
 # 
 # #THROTTLE FOR PIGPIO_PWM
 # THROTTLE_PWM_PIN = 18           #Pin numbering according to Broadcom numbers
@@ -135,21 +132,21 @@ THROTTLE_REVERSE_PWM = 300 #360      #pwm value for max reverse throttle
 # NUM_LAST_LAYERS_TO_TRAIN = 7        #when freezing layers, how many layers from the last should be allowed to train?
 # 
 # #WEB CONTROL
-WEB_CONTROL_PORT = 8887             # which port to listen on when making a web controller
+# WEB_CONTROL_PORT = 8887             # which port to listen on when making a web controller
 # WEB_INIT_MODE = "user"              # which control mode to start in. one of user|local_angle|local. Setting local will start in ai mode.
 # 
 # #JOYSTICK
-USE_JOYSTICK_AS_DEFAULT = True     #when starting the manage.py, when True, will not require a --js option to use the joystick
-# JOYSTICK_MAX_THROTTLE = 1 #0.5         #this scalar is multiplied with the -1 to 1 throttle value to limit the maximum throttle. This can help if you drop the controller or just don't need the full speed available.
-# JOYSTICK_STEERING_SCALE = 0.5       #some people want a steering that is less sensitve. This scalar is multiplied with the steering -1 to 1. It can be negative to reverse dir.
+USE_JOYSTICK_AS_DEFAULT = False     #when starting the manage.py, when True, will not require a --js option to use the joystick
+# JOYSTICK_MAX_THROTTLE = 0.5         #this scalar is multiplied with the -1 to 1 throttle value to limit the maximum throttle. This can help if you drop the controller or just don't need the full speed available.
+# JOYSTICK_STEERING_SCALE = 1.0       #some people want a steering that is less sensitve. This scalar is multiplied with the steering -1 to 1. It can be negative to reverse dir.
 # AUTO_RECORD_ON_THROTTLE = True      #if true, we will record whenever throttle is not zero. if false, you must manually toggle recording with some other trigger. Usually circle button on joystick.
-#CONTROLLER_TYPE='custom'               #(ps3|ps4|xbox|nimbus|wiiu|F710|rc3|MM1|custom) custom will run the my_joystick.py controller written by the `donkey createjs` command
-CONTROLLER_TYPE='serial'               #(ps3|ps4|xbox|nimbus|wiiu|F710|rc3|MM1|custom) custom will run the my_joystick.py controller written by the `donkey createjs` command
+# CONTROLLER_TYPE='ps3'               #(ps3|ps4|xbox|nimbus|wiiu|F710|rc3|MM1|custom) custom will run the my_joystick.py controller written by the `donkey createjs` command
+# CONTROLLER_TYPE='custom'
 # USE_NETWORKED_JS = False            #should we listen for remote joystick control over the network?
 # NETWORK_JS_SERVER_IP = "192.168.0.1"#when listening for network joystick control, which ip is serving this information
 # JOYSTICK_DEADZONE = 0.0             # when non zero, this is the smallest throttle before recording triggered.
 # JOYSTICK_THROTTLE_DIR = -1.0        # use -1.0 to flip forward/backward, use 1.0 to use joystick's natural forward/backward
-USE_FPV = True                     # send camera data to FPV webserver
+# USE_FPV = False                     # send camera data to FPV webserver
 # JOYSTICK_DEVICE_FILE = "/dev/input/js0" # this is the unix file use to access the joystick.
 # 
 # #For the categorical model, this limits the upper bound of the learned throttle
@@ -161,9 +158,9 @@ USE_FPV = True                     # send camera data to FPV webserver
 # SEQUENCE_LENGTH = 3             #some models use a number of images over time. This controls how many.
 # 
 # #IMU
-HAVE_IMU = True                #when true, this add a Mpu6050 part and records the data. Can be used with a
-IMU_SENSOR = 'mpu6050'          # (mpu6050|mpu9250)
-IMU_DLP_CONFIG = 3              # Digital Lowpass Filter setting (0:250Hz, 1:184Hz, 2:92Hz, 3:41Hz, 4:20Hz, 5:10Hz, 6:5Hz)
+# HAVE_IMU = False                #when true, this add a Mpu6050 part and records the data. Can be used with a
+# IMU_SENSOR = 'mpu6050'          # (mpu6050|mpu9250)
+# IMU_DLP_CONFIG = 0              # Digital Lowpass Filter setting (0:250Hz, 1:184Hz, 2:92Hz, 3:41Hz, 4:20Hz, 5:10Hz, 6:5Hz)
 # 
 # #SOMBRERO
 # HAVE_SOMBRERO = False           #set to true when using the sombrero hat from the Donkeycar store. This will enable pwm on the hat.
@@ -183,7 +180,17 @@ IMU_DLP_CONFIG = 3              # Digital Lowpass Filter setting (0:250Hz, 1:184
 # # -- MacOS/Linux:please use 'ls /dev/tty.*' to find the correct serial port for mm1 
 # #  eg.'/dev/tty.usbmodemXXXXXX' and replace the port accordingly
 # MM1_SERIAL_PORT = '/dev/ttyS0'  # Serial Port for reading and sending MM1 data.
-# 
+#
+
+#TELEMETRY
+HAVE_TELEMETRY = True
+TELEMETRY_DONKEY_NAME = 'my_robot1234'
+TELEMETRY_MQTT_TOPIC_TEMPLATE = 'donkey/%s/telemetry'
+TELEMETRY_MQTT_JSON_ENABLE = False
+TELEMETRY_MQTT_BROKER_HOST = 'mqtt.eclipse.org'
+TELEMETRY_MQTT_BROKER_PORT = 1883
+TELEMETRY_PUBLISH_PERIOD = 1
+
 # #RECORD OPTIONS
 # RECORD_DURING_AI = False        #normally we do not record during ai mode. Set this to true to get image and steering records for your Ai. Be careful not to use them to train.
 # 
@@ -244,9 +251,9 @@ IMU_DLP_CONFIG = 3              # Digital Lowpass Filter setting (0:250Hz, 1:184
 # #This enables that, and sets the path to the simualator and the environment.
 # #You will want to download the simulator binary from: https://github.com/tawnkramer/donkey_gym/releases/download/v18.9/DonkeySimLinux.zip
 # #then extract that and modify DONKEY_SIM_PATH.
-# DONKEY_GYM = False
-# DONKEY_SIM_PATH = "path to sim" #"/home/tkramer/projects/sdsandbox/sdsim/build/DonkeySimLinux/donkey_sim.x86_64" when racing on virtual-race-league use "remote", or user "remote" when you want to start the sim manually first.
-# DONKEY_GYM_ENV_NAME = "donkey-mountain-track-v0" # ("donkey-generated-track-v0"|"donkey-generated-roads-v0"|"donkey-warehouse-v0"|"donkey-avc-sparkfun-v0")
+DONKEY_GYM = True
+DONKEY_SIM_PATH = "c:\debug\donkey\DonkeySimWin\donkey_sim.exe" #"/home/tkramer/projects/sdsandbox/sdsim/build/DonkeySimLinux/donkey_sim.x86_64" when racing on virtual-race-league use "remote", or user "remote" when you want to start the sim manually first.
+DONKEY_GYM_ENV_NAME = "donkey-warehouse-v0" # ("donkey-generated-track-v0"|"donkey-generated-roads-v0"|"donkey-warehouse-v0"|"donkey-avc-sparkfun-v0")
 # GYM_CONF = { "body_style" : "donkey", "body_rgb" : (128, 128, 128), "car_name" : "car", "font_size" : 100} # body style(donkey|bare|car01) body rgb 0-255
 # GYM_CONF["racer_name"] = "Your Name"
 # GYM_CONF["country"] = "Place"
