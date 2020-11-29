@@ -312,7 +312,7 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
     if cfg.HAVE_PERFMON:
         from donkeycar.parts.perfmon import PerfMonitor
         mon = PerfMonitor(cfg)
-        V.add(mon, inputs=[], outputs=['perf/cpu', 'perf/mem', 'perf/freq'], threaded=False)
+        V.add(mon, inputs=[], outputs=['perf/cpu', 'perf/mem', 'perf/freq'], threaded=True)
 
     #Behavioral state
     if cfg.TRAIN_BEHAVIORS:
