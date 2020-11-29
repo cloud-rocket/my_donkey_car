@@ -184,6 +184,16 @@ IMU_DLP_CONFIG = 3              # Digital Lowpass Filter setting (0:250Hz, 1:184
 # #  eg.'/dev/tty.usbmodemXXXXXX' and replace the port accordingly
 # MM1_SERIAL_PORT = '/dev/ttyS0'  # Serial Port for reading and sending MM1 data.
 # 
+
+#TELEMETRY
+HAVE_TELEMETRY = True
+TELEMETRY_DONKEY_NAME = 'texas2020'
+TELEMETRY_MQTT_TOPIC_TEMPLATE = 'donkey/%s/telemetry'
+TELEMETRY_MQTT_JSON_ENABLE = False
+TELEMETRY_MQTT_BROKER_HOST = 'mqtt.eclipse.org'
+TELEMETRY_MQTT_BROKER_PORT = 1883
+TELEMETRY_PUBLISH_PERIOD = 1
+
 # #RECORD OPTIONS
 # RECORD_DURING_AI = False        #normally we do not record during ai mode. Set this to true to get image and steering records for your Ai. Be careful not to use them to train.
 # 
