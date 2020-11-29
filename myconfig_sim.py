@@ -191,6 +191,9 @@ TELEMETRY_MQTT_BROKER_HOST = 'mqtt.eclipse.org'
 TELEMETRY_MQTT_BROKER_PORT = 1883
 TELEMETRY_PUBLISH_PERIOD = 1
 
+# PERF MONITOR
+HAVE_PERFMON = True
+
 # #RECORD OPTIONS
 # RECORD_DURING_AI = False        #normally we do not record during ai mode. Set this to true to get image and steering records for your Ai. Be careful not to use them to train.
 # 
