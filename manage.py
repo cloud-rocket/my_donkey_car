@@ -308,7 +308,7 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
     if cfg.USE_FPV:
         V.add(WebFpv(), inputs=['cam/image_array'], threaded=True)
 
-    #PERFMON
+    # PERFMON
     if cfg.HAVE_PERFMON:
         from donkeycar.parts.perfmon import PerfMonitor
         mon = PerfMonitor(cfg)
@@ -599,22 +599,13 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
         cfg.AUTO_CREATE_NEW_TUB else cfg.DATA_PATH
     tub_writer = TubWriter(tub_path, inputs=inputs, types=types, metadata=meta)
     V.add(tub_writer, inputs=inputs, outputs=["tub/num_records"], run_condition='recording')
-    #Telemetry (we add the same metrics added to TubHandler
-    if cfg.HAVE_TELEMETRY:
-        from donkeycar.parts.telemetry import Telemetry
 
-        # publish all simple types
-        inputs_to_publish = []
-        types_to_publish = []
-        for ind in range(0, len(types)):
-            if types[ind] in ['float', 'str', 'int']:
-                inputs_to_publish.append(inputs[ind])
-                types_to_publish.append(types[ind])
-
-        tel = Telemetry(cfg, default_inputs=inputs_to_publish, default_types=types_to_publish)
-
-        V.add(tel, inputs=inputs_to_publish, outputs=["tub/queue_size"], threaded=False)
-
+    # Telemetry (we add the same metrics added to the TubHandler
+    if cfg.HAVE_MQTT_TELEMETRY:
+        from donkeycar.parts.telemetry import MqttTelemetry
+        published_inputs, published_types = MqttTelemetry.filter_supported_metrics(inputs, types)
+        tel = MqttTelemetry(cfg, default_inputs=published_inputs, default_types=published_types)
+        V.add(tel, inputs=published_inputs, outputs=["tub/queue_size"], threaded=False)
 
     if cfg.PUB_CAMERA_IMAGES:
         from donkeycar.parts.network import TCPServeValue
