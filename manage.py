@@ -308,12 +308,6 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
     if cfg.USE_FPV:
         V.add(WebFpv(), inputs=['cam/image_array'], threaded=True)
 
-    # PERFMON
-    if cfg.HAVE_PERFMON:
-        from donkeycar.parts.perfmon import PerfMonitor
-        mon = PerfMonitor(cfg)
-        V.add(mon, inputs=[], outputs=['perf/cpu', 'perf/mem', 'perf/freq'], threaded=True)
-
     #Behavioral state
     if cfg.TRAIN_BEHAVIORS:
         bh = BehaviorPart(cfg.BEHAVIOR_LIST)
@@ -369,7 +363,7 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
 
         model_reload_cb = None
 
-        if '.h5' in model_path or '.uff' in model_path or 'tflite' in model_path or '.pkl' in model_path:
+        if '.h5' in model_path or '.uff' in model_path or 'tflite' in model_path or '.pkl' in model_path or '.onnx' in model_path:
             #when we have a .h5 extension
             #load everything from the model file
             load_model(kl, model_path)
@@ -591,8 +585,12 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
         types += ['float', 'float']
 
     if cfg.HAVE_PERFMON:
-        inputs += ['perf/cpu', 'perf/mem', 'perf/freq']
+        from donkeycar.parts.perfmon import PerfMonitor
+        mon = PerfMonitor(cfg)
+        perfmon_outputs = ['perf/cpu', 'perf/mem', 'perf/freq']
+        inputs += perfmon_outputs
         types += ['float', 'float', 'float']
+        V.add(mon, inputs=[], outputs=perfmon_outputs, threaded=True)
 
     # do we want to store new records into own dir or append to existing
     tub_path = TubHandler(path=cfg.DATA_PATH).create_tub_path() if \

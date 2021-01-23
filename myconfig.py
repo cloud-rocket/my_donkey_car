@@ -16,7 +16,7 @@
 # MODELS_PATH = os.path.join(CAR_PATH, 'models')
 # 
 # #VEHICLE
-DRIVE_LOOP_HZ = 20      # the vehicle loop will pause if faster than this speed.
+DRIVE_LOOP_HZ = 30      # the vehicle loop will pause if faster than this speed.
 # MAX_LOOPS = None        # the vehicle loop can abort after this many iterations, when given a positive integer.
 # 
 # #CAMERA
@@ -94,7 +94,8 @@ THROTTLE_REVERSE_PWM = 300 #360      #pwm value for max reverse throttle
 # #The DEFAULT_MODEL_TYPE will choose which model will be created at training time. This chooses
 # #between different neural network designs. You can override this setting by passing the command
 # #line parameter --type to the python manage.py train and drive commands.
-# DEFAULT_MODEL_TYPE = 'linear'   #(linear|categorical|rnn|imu|behavior|3d|localizer|latent)
+#DEFAULT_MODEL_TYPE = 'linear'   #(linear|categorical|rnn|imu|behavior|3d|localizer|latent)
+DEFAULT_MODEL_TYPE = 'tflite_linear'
 # BATCH_SIZE = 128                #how many records to use when doing one pass of gradient decent. Use a smaller number if your gpu is running out of memory.
 # TRAIN_TEST_SPLIT = 0.8          #what percent of records to use for training. the remaining used for validation.
 # MAX_EPOCHS = 100                #how many times to visit all records of your data
