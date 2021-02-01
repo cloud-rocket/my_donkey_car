@@ -16,7 +16,7 @@ Options:
 """
 import os
 import time
-
+import logging
 from docopt import docopt
 import numpy as np
 
@@ -32,6 +32,7 @@ from donkeycar.parts.file_watcher import FileWatcher
 from donkeycar.parts.launch import AiLaunch
 from donkeycar.utils import *
 
+logger = logging.getLogger()
 
 def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type='single', meta=[]):
     '''
@@ -60,7 +61,18 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
     #Initialize car
     V = dk.vehicle.Vehicle()
 
-    print("cfg.CAMERA_TYPE", cfg.CAMERA_TYPE)
+    #Initialize logging before anything else to allow console logging
+    if cfg.HAVE_CONSOLE_LOGGING:
+        logger.setLevel(logging.getLevelName(cfg.LOGGING_LEVEL))
+        ch = logging.StreamHandler()
+        ch.setFormatter(logging.Formatter(cfg.LOGGING_FORMAT))
+        logger.addHandler(ch)
+
+    if cfg.HAVE_MQTT_TELEMETRY:
+        from donkeycar.parts.telemetry import MqttTelemetry
+        tel = MqttTelemetry(cfg)
+
+    logger.info("cfg.CAMERA_TYPE %s"%cfg.CAMERA_TYPE)
     if camera_type == "stereo":
 
         if cfg.CAMERA_TYPE == "WEBCAM":
@@ -600,10 +612,8 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
 
     # Telemetry (we add the same metrics added to the TubHandler
     if cfg.HAVE_MQTT_TELEMETRY:
-        from donkeycar.parts.telemetry import MqttTelemetry
-        published_inputs, published_types = MqttTelemetry.filter_supported_metrics(inputs, types)
-        tel = MqttTelemetry(cfg, default_inputs=published_inputs, default_types=published_types)
-        V.add(tel, inputs=published_inputs, outputs=["tub/queue_size"], threaded=True)
+        telem_inputs, _ = tel.add_step_inputs(inputs, types)
+        V.add(tel, inputs=telem_inputs, outputs=["tub/queue_size"], threaded=True)
 
     if cfg.PUB_CAMERA_IMAGES:
         from donkeycar.parts.network import TCPServeValue
