@@ -16,7 +16,7 @@ Options:
 """
 import os
 import time
-
+import logging
 from docopt import docopt
 import numpy as np
 
@@ -32,6 +32,7 @@ from donkeycar.parts.file_watcher import FileWatcher
 from donkeycar.parts.launch import AiLaunch
 from donkeycar.utils import *
 
+logger = logging.getLogger()
 
 def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type='single', meta=[]):
     '''
@@ -60,7 +61,18 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
     #Initialize car
     V = dk.vehicle.Vehicle()
 
-    print("cfg.CAMERA_TYPE", cfg.CAMERA_TYPE)
+    #Initialize logging before anything else to allow console logging
+    if cfg.HAVE_CONSOLE_LOGGING:
+        logger.setLevel(logging.getLevelName(cfg.LOGGING_LEVEL))
+        ch = logging.StreamHandler()
+        ch.setFormatter(logging.Formatter(cfg.LOGGING_FORMAT))
+        logger.addHandler(ch)
+
+    if cfg.HAVE_MQTT_TELEMETRY:
+        from donkeycar.parts.telemetry import MqttTelemetry
+        tel = MqttTelemetry(cfg)
+
+    logger.info("cfg.CAMERA_TYPE %s"%cfg.CAMERA_TYPE)
     if camera_type == "stereo":
 
         if cfg.CAMERA_TYPE == "WEBCAM":
@@ -308,12 +320,6 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
     if cfg.USE_FPV:
         V.add(WebFpv(), inputs=['cam/image_array'], threaded=True)
 
-    # PERFMON
-    if cfg.HAVE_PERFMON:
-        from donkeycar.parts.perfmon import PerfMonitor
-        mon = PerfMonitor(cfg)
-        V.add(mon, inputs=[], outputs=['perf/cpu', 'perf/mem', 'perf/freq'], threaded=True)
-
     #Behavioral state
     if cfg.TRAIN_BEHAVIORS:
         bh = BehaviorPart(cfg.BEHAVIOR_LIST)
@@ -369,7 +375,7 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
 
         model_reload_cb = None
 
-        if '.h5' in model_path or '.uff' in model_path or 'tflite' in model_path or '.pkl' in model_path:
+        if '.h5' in model_path or '.uff' in model_path or 'tflite' in model_path or '.pkl' in model_path or '.onnx' in model_path:
             #when we have a .h5 extension
             #load everything from the model file
             load_model(kl, model_path)
@@ -591,8 +597,12 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
         types += ['float', 'float']
 
     if cfg.HAVE_PERFMON:
-        inputs += ['perf/cpu', 'perf/mem', 'perf/freq']
+        from donkeycar.parts.perfmon import PerfMonitor
+        mon = PerfMonitor(cfg)
+        perfmon_outputs = ['perf/cpu', 'perf/mem', 'perf/freq']
+        inputs += perfmon_outputs
         types += ['float', 'float', 'float']
+        V.add(mon, inputs=[], outputs=perfmon_outputs, threaded=True)
 
     # do we want to store new records into own dir or append to existing
     tub_path = TubHandler(path=cfg.DATA_PATH).create_tub_path() if \
@@ -602,10 +612,8 @@ def drive(cfg, model_path=None, use_joystick=False, model_type=None, camera_type
 
     # Telemetry (we add the same metrics added to the TubHandler
     if cfg.HAVE_MQTT_TELEMETRY:
-        from donkeycar.parts.telemetry import MqttTelemetry
-        published_inputs, published_types = MqttTelemetry.filter_supported_metrics(inputs, types)
-        tel = MqttTelemetry(cfg, default_inputs=published_inputs, default_types=published_types)
-        V.add(tel, inputs=published_inputs, outputs=["tub/queue_size"], threaded=True)
+        telem_inputs, _ = tel.add_step_inputs(inputs, types)
+        V.add(tel, inputs=telem_inputs, outputs=["tub/queue_size"], threaded=True)
 
     if cfg.PUB_CAMERA_IMAGES:
         from donkeycar.parts.network import TCPServeValue
