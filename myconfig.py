@@ -16,7 +16,7 @@
 # MODELS_PATH = os.path.join(CAR_PATH, 'models')
 # 
 # #VEHICLE
-DRIVE_LOOP_HZ = 30      # the vehicle loop will pause if faster than this speed.
+DRIVE_LOOP_HZ = 25      # the vehicle loop will pause if faster than this speed.
 # MAX_LOOPS = None        # the vehicle loop can abort after this many iterations, when given a positive integer.
 # 
 # #CAMERA
@@ -284,6 +284,8 @@ HAVE_PERFMON = True
 # 
 # #Scale the output of the throttle of the ai pilot for all model types.
 # AI_THROTTLE_MULT = 1.0              # this multiplier will scale every throttle value for all output from NN models
+AI_MAX_CONCURRENT_INFERENCES = 3    # max amount of concurrently running pilot inferences
+AI_PILOT_THREADED = True
 # 
 # #Path following
 # PATH_FILENAME = "donkey_path.pkl"   # the path will be saved to this filename
